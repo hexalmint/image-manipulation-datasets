@@ -25,7 +25,9 @@ All datasets are compatible with PyTorch's `torch.utils.data.DataLoader`. For ex
 
 ## Examples
 
-### CASIA 2.0
+### Loading Datasets
+
+#### CASIA 2.0
 
 Ensure that the ground truth directory is in data_dir and named 'CASIA 2 Groundtruth'.
 
@@ -36,7 +38,7 @@ from imds import casia
 dataset = casia.Casia2(data_dir='data/CASIA2.0')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
 ```
 
-### Defacto Copy/Move
+#### Defacto Copy/Move
 
 ```python
 from imds import defacto
@@ -45,7 +47,7 @@ from imds import defacto
 dataset = defacto.CopyMove(data_dir='data/copy-move')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
 ```
 
-### Defacto Inpainting
+#### Defacto Inpainting
 
 ```python
 from imds import defacto
@@ -54,7 +56,7 @@ from imds import defacto
 dataset = defacto.Inpainting(data_dir='data/inpainting')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
 ```
 
-### Defacto Splicing
+#### Defacto Splicing
 
 ```python
 from imds import defacto
@@ -63,7 +65,7 @@ from imds import defacto
 dataset = defacto.Splicing(data_dir='data/splicing')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
 ```
 
-### Coverage
+#### Coverage
 
 ```python
 from imds import coverage
@@ -72,7 +74,7 @@ from imds import coverage
 dataset = coverage.Coverage(data_dir='data/coverage')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
 ```
 
-### IMD2020
+#### IMD2020
 
 ```python
 from imds import imd
