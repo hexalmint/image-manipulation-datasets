@@ -1,3 +1,17 @@
+[project]
+name = "image-manipulation-datasets"
+version = "0.6.5"
+description = "A collection of image manipulation dataset classes implemented in PyTorch"
+authors = [{ name = "Spencer Cain", email = "cainspencerm@protonmail.com" }]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "torch (>=1.11.0,<2.0.0)",
+    "pillow (>=9.1.1,<10.0.0)",
+    "numpy (>=1.22.4,<2.0.0)",
+]
+
+
 [build-system]
-requires = ["setuptools>=42"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
