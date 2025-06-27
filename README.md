@@ -83,6 +83,22 @@ from imds import imd
 dataset = imd.IMD2020(data_dir='data/IMD2020')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
 ```
 
+### Using Datasets
+
+#### Basic Usage
+
+```python
+from imds import casia
+
+dataset = casia.Casia2(data_dir='data/CASIA2.0')
+
+for image, mask in dataset:
+    # image is a Tensor of shape (C, H, W) with pixel values in [0, 1] (see `pixel_range` in the dataset class)
+    # mask is a Tensor of shape (1, H, W) with pixel values in [0, 1] (see `pixel_range` in the dataset class)
+    # Do something with the image and mask
+    pass
+```
+
 ## Sample Quality
 
 Datasets are not always perfect. Of the available datasets, COVERAGE, CASIA 2, and Defacto Splicing had images and masks that didn't match in size, though they have been verified as pairs. For this reason, the dataset classes resize the masks to the size of the original image, with the hopes that the masks line up correctly with the image. This is unverified as it would require manually verifying each of the over 110,000 image and mask pairs.
