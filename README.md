@@ -17,6 +17,12 @@ Currently, the supported datasets are:
 pip install git+https://github.com/cainspencerm/image-manipulation-datasets.git@0.6
 ```
 
+## Usage
+
+All datasets are compatible with PyTorch's `torch.utils.data.DataLoader`. For examples on how to create and use datasets, see the examples section.
+
+**Note:** Dataset constructors load the image and mask filepaths synchronously on initialization, opting to lazily load images and masks when accessed. 
+
 ## Examples
 
 ### CASIA 2.0
