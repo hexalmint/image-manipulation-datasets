@@ -4,7 +4,7 @@ from typing import Tuple
 import numpy as np
 
 from imds._dataset import _BaseDataset
-from imds.defacto import Splicing
+from imds.defacto import Splicing, CopyMove
 
 
 class Inpainting(_BaseDataset):
