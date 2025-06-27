@@ -1,5 +1,5 @@
 [project]
-name = "image-manipulation-datasets"
+name = "imds"
 version = "0.6.5"
 description = "A collection of image manipulation dataset classes implemented in PyTorch"
 authors = [{ name = "Spencer Cain", email = "cainspencerm@protonmail.com" }]
