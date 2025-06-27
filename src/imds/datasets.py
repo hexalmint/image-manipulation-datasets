@@ -4,8 +4,9 @@ from typing import Tuple
 import numpy as np
 
 from imds._dataset import _BaseDataset
-from imds.defacto import Splicing, CopyMove, Inpainting
 from imds.casia import CASIA2
+from imds.coverage import Coverage
+from imds.defacto import CopyMove, Inpainting, Splicing
 
 
 class IMD2020(_BaseDataset):
