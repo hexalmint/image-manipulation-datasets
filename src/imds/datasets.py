@@ -4,7 +4,7 @@ from typing import Tuple
 import numpy as np
 
 from imds._dataset import _BaseDataset
-from imds.defacto import Splicing, CopyMove
+from imds.defacto import Splicing, CopyMove, Inpainting
 
 
 class CASIA2(_BaseDataset):
