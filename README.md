@@ -33,10 +33,10 @@ dataset = casia.Casia2(data_dir='data/CASIA2.0')  # optional split=['train', 'va
 ### Defacto Copy/Move
 
 ```python
-import image_manip.datasets as imds
+from imds import defacto
 
 # Create dataset object for dataloader.
-dataset = imds.CopyMove(data_dir='data/copy-move')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
+dataset = defacto.CopyMove(data_dir='data/copy-move')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
 ```
 
 ## Sample Quality
