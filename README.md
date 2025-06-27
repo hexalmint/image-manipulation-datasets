@@ -17,26 +17,102 @@ Currently, the supported datasets are:
 pip install git+https://github.com/cainspencerm/image-manipulation-datasets.git@0.6
 ```
 
+## Usage
+
+All datasets are compatible with PyTorch's `torch.utils.data.DataLoader`. For examples on how to create and use datasets, see the examples section.
+
+**Note:** Dataset constructors load the image and mask filepaths synchronously on initialization, opting to lazily load images and masks when accessed. 
+
 ## Examples
 
-### CASIA 2.0
+### Loading Datasets
+
+#### CASIA 2.0
 
 Ensure that the ground truth directory is in data_dir and named 'CASIA 2 Groundtruth'.
 
 ```python
-import image_manip.datasets as imds
+from imds import casia
 
 # Create dataset object for dataloader.
-dataset = imds.Casia2(data_dir='data/CASIA2.0')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
+dataset = casia.Casia2(data_dir='data/CASIA2.0')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
 ```
 
-### Defacto Copy/Move
+#### Defacto Copy/Move
 
 ```python
-import image_manip.datasets as imds
+from imds import defacto
 
 # Create dataset object for dataloader.
-dataset = imds.CopyMove(data_dir='data/copy-move')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
+dataset = defacto.CopyMove(data_dir='data/copy-move')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
+```
+
+#### Defacto Inpainting
+
+```python
+from imds import defacto
+
+# Create dataset object for dataloader.
+dataset = defacto.Inpainting(data_dir='data/inpainting')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
+```
+
+#### Defacto Splicing
+
+```python
+from imds import defacto
+
+# Create dataset object for dataloader.
+dataset = defacto.Splicing(data_dir='data/splicing')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
+```
+
+#### Coverage
+
+```python
+from imds import coverage
+
+# Create dataset object for dataloader.
+dataset = coverage.Coverage(data_dir='data/coverage')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
+```
+
+#### IMD2020
+
+```python
+from imds import imd
+
+# Create dataset object for dataloader.
+dataset = imd.IMD2020(data_dir='data/IMD2020')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
+```
+
+### Using Datasets
+
+#### Basic Usage
+
+```python
+from imds import casia
+
+dataset = casia.Casia2(data_dir='data/CASIA2.0')
+
+for image, mask in dataset:
+    # image is a Tensor of shape (C, H, W) with pixel values in [0, 1] (see `pixel_range` in the dataset class)
+    # mask is a Tensor of shape (1, H, W) with pixel values in [0, 1] (see `pixel_range` in the dataset class)
+    # Do something with the image and mask
+    pass
+```
+
+#### Using Datasets with DataLoader
+
+```python
+from imds import casia
+from torch.utils.data import DataLoader
+
+dataset = casia.Casia2(data_dir='data/CASIA2.0')
+dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+for images, masks in dataloader:
+    # images is a Tensor of shape (B, C, H, W) with pixel values in [0, 1]
+    # masks is a Tensor of shape (B, 1, H, W) with pixel values in [0, 1]
+    # Do something with the images and masks
+    pass
 ```
 
 ## Sample Quality
