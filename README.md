@@ -99,6 +99,22 @@ for image, mask in dataset:
     pass
 ```
 
+#### Using Datasets with DataLoader
+
+```python
+from imds import casia
+from torch.utils.data import DataLoader
+
+dataset = casia.Casia2(data_dir='data/CASIA2.0')
+dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+for images, masks in dataloader:
+    # images is a Tensor of shape (B, C, H, W) with pixel values in [0, 1]
+    # masks is a Tensor of shape (B, 1, H, W) with pixel values in [0, 1]
+    # Do something with the images and masks
+    pass
+```
+
 ## Sample Quality
 
 Datasets are not always perfect. Of the available datasets, COVERAGE, CASIA 2, and Defacto Splicing had images and masks that didn't match in size, though they have been verified as pairs. For this reason, the dataset classes resize the masks to the size of the original image, with the hopes that the masks line up correctly with the image. This is unverified as it would require manually verifying each of the over 110,000 image and mask pairs.
