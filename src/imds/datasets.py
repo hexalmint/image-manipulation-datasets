@@ -1,6 +1,7 @@
 from imds.casia import CASIA2
 from imds.coverage import Coverage
 from imds.defacto import CopyMove, Inpainting, Splicing
+from imds.imd import IMD2020
 
 
 def main():
