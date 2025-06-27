@@ -24,10 +24,10 @@ pip install git+https://github.com/cainspencerm/image-manipulation-datasets.git@
 Ensure that the ground truth directory is in data_dir and named 'CASIA 2 Groundtruth'.
 
 ```python
-import image_manip.datasets as imds
+from imds import casia
 
 # Create dataset object for dataloader.
-dataset = imds.Casia2(data_dir='data/CASIA2.0')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
+dataset = casia.Casia2(data_dir='data/CASIA2.0')  # optional split=['train', 'val', 'test', 'benchmark', 'full']
 ```
 
 ### Defacto Copy/Move
