@@ -4,6 +4,7 @@ from typing import Tuple
 import numpy as np
 
 from imds._dataset import _BaseDataset
+from imds.defacto import Splicing
 
 
 class CopyMove(_BaseDataset):
