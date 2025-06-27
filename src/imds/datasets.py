@@ -5,6 +5,7 @@ import numpy as np
 
 from imds._dataset import _BaseDataset
 from imds.defacto import Splicing, CopyMove, Inpainting
+from imds.casia import CASIA2
 
 
 class Coverage(_BaseDataset):
