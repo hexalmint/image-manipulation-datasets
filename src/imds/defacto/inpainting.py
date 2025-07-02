@@ -95,7 +95,7 @@ class Inpainting(_BaseDataset):
 
         # Note that the order of the output files is aligned with the input files.
         if split == "train":
-            self._image_files = image_files[: split_size * 8]
+            self._image_files: List[str] = image_files[: split_size * 8]
 
         elif split == "valid":
             self._image_files = image_files[split_size * 8 : split_size * 9]
