@@ -66,7 +66,7 @@ class CASIA2(_BaseDataset):
         ]
 
         # Ignore these files that have no ground truth masks.
-        remove_files: list[str] = []
+        remove_files: List[str] = []
 
         # Fetch the mask filenames.
         mask_dir = os.path.join(data_dir, "CASIA 2 Groundtruth")
