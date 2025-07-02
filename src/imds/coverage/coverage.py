@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Literal, Tuple, Union
+from typing import List, Literal, Optional, Tuple, Union
 
 import numpy as np
 
@@ -70,23 +70,15 @@ class Coverage(_BaseDataset):
 
         # Fetch the image filenames.
         image_dir = os.path.join(data_dir, "image")
-        self._image_files = [
-            os.path.abspath(os.path.join(image_dir, f))
-            for f in os.listdir(image_dir)
-            if f.endswith("tif") or f.endswith("jpg")
-        ]
-
-        # Shuffle the image files for a random split.
-        if shuffle:
-            self._image_files = np.random.permutation(self.image_files).tolist()
-
-        # Fetch the mask filenames.
-        mask_dir = os.path.abspath(os.path.join(data_dir, "mask"))
-        mask_files = [
-            os.path.abspath(os.path.join(mask_dir, f))
-            for f in os.listdir(mask_dir)
-            if ".tif" in f
-        ]
+        auth_image_paths: List[str] = []
+        tamp_image_paths: List[str] = []
+        for f in os.listdir(image_dir):
+            fname, _ = os.path.splitext(f)
+            abs_path = os.path.abspath(os.path.join(image_dir, f))
+            if fname.endswith("t"):
+                tamp_image_paths.append(abs_path)
+            else:
+                auth_image_paths.append(abs_path)
 
         # Create a mask type filter.
         if mask_type == "forged":
@@ -98,19 +90,40 @@ class Coverage(_BaseDataset):
         elif mask_type == "all":
             _mask_types = ["forged", "copy", "paste"]
 
-        # Organize the mask files based on the ordering of the image files.
-        self._mask_files = []
-        for f in self.image_files:
-            f_name = f.split(".")[0]
-            if f_name[-1] == "t":
-                for mt in _mask_types:
-                    mask_file = f_name[:-1] + mt + ".tif"
-                    mask_file = os.path.abspath(os.path.join(mask_dir, mask_file))
-                    assert mask_file in mask_files
+        # Fetch the mask filenames.
+        mask_dir = os.path.abspath(os.path.join(data_dir, "mask"))
+        tamp_mask_paths: List[str] = []
+        for tamp_image_path in tamp_image_paths:
+            image_name, image_ext = os.path.splitext(
+                tamp_image_path.split(os.path.sep)[-1]
+            )
+            image_name = image_name[
+                :-1
+            ]  # Remove the 't' at the end of tampered images.
+            for mt in _mask_types:
+                mask_file = f"{image_name}{mt}{image_ext}"
+                mask_file_path = os.path.abspath(os.path.join(mask_dir, mask_file))
+                tamp_mask_paths.append(mask_file_path)
 
-                    self._mask_files.append(mask_file)
-            else:
-                self._mask_files.append(None)
+        # Increase the number of each tampered image to match the number of masks using that image.
+        unique_tamp_image_paths = tamp_image_paths
+        tamp_image_paths = []
+        for tamp_mask_path in unique_tamp_image_paths:
+            tamp_image_paths.extend([tamp_mask_path] * len(_mask_types))
+
+        image_files: List[str] = auth_image_paths + tamp_image_paths
+        mask_files: List[Union[str, None]] = [None] * len(
+            auth_image_paths
+        ) + tamp_mask_paths
+
+        # Shuffle the image files for a random split.
+        if shuffle:
+            p = np.random.permutation(len(image_files))
+            image_files = np.array(image_files)[p].tolist()
+            mask_files = np.array(mask_files)[p].tolist()
+
+        self._image_files = image_files
+        self._mask_files = mask_files
 
     @property
     def image_files(self) -> List[str]:
