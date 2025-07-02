@@ -51,16 +51,18 @@ class _BaseDataset(data.Dataset[Tuple[torch.Tensor, torch.Tensor]], ABC):
 
             # The mask doesn't exist; assume it has no manipulated pixels.
             crop_size = self.crop_size if self.crop_size is not None else image.size
-            mask = torch.zeros(crop_size, dtype=self.data_type).unsqueeze(dim=0)
+            mask_tensor = torch.zeros(crop_size, dtype=self.data_type).unsqueeze(dim=0)
 
             # Normalize the image.
-            image = np.array(image) * (pixel_max - pixel_min) / 255.0 + pixel_min
+            norm_image = np.array(image) * (pixel_max - pixel_min) / 255.0 + pixel_min
 
             # Crop or pad the image.
-            image = utils.crop_or_pad(image, crop_size, pad_value=pixel_max)
+            crop_image = utils.crop_or_pad(norm_image, crop_size, pad_value=pixel_max)
 
             # Convert the image to a tensor.
-            image = torch.from_numpy(image).to(self.data_type).permute(2, 0, 1)
+            image_tensor = (
+                torch.from_numpy(crop_image).to(self.data_type).permute(2, 0, 1)
+            )
 
         else:
 
@@ -75,25 +77,29 @@ class _BaseDataset(data.Dataset[Tuple[torch.Tensor, torch.Tensor]], ABC):
             mask = mask.resize(image.size[:2])
 
             # Normalize the image and mask.
-            image = np.array(image) * (pixel_max - pixel_min) / 255.0 + pixel_min
-            mask = np.array(mask) / 255.0
+            norm_image = np.array(image) * (pixel_max - pixel_min) / 255.0 + pixel_min
+            norm_mask = np.array(mask) / 255.0
 
             # Convert partially mixed pixel labels to manipulated pixel labels.
-            mask = (mask > 0.0).astype(float)
+            norm_mask = (norm_mask > 0.0).astype(norm_mask.dtype)
 
             # Crop or pad the image and mask.
             crop_size = (
-                self.crop_size if self.crop_size is not None else image.shape[:2]
+                self.crop_size if self.crop_size is not None else norm_image.shape[:2]
             )
-            image, mask = utils.crop_or_pad(
-                [image, mask], crop_size, pad_value=[pixel_max, 1.0]
+            crop_image, crop_mask = utils.crop_or_pad(
+                [norm_image, norm_mask], crop_size, pad_value=[pixel_max, 1.0]
             )
 
             # Convert the image and mask to tensors.
-            image = torch.from_numpy(image).to(self.data_type).permute(2, 0, 1)
-            mask = torch.from_numpy(mask).to(self.data_type).permute(2, 0, 1)
+            image_tensor = (
+                torch.from_numpy(crop_image).to(self.data_type).permute(2, 0, 1)
+            )
+            mask_tensor = (
+                torch.from_numpy(crop_mask).to(self.data_type).permute(2, 0, 1)
+            )
 
-        return image, mask
+        return image_tensor, mask_tensor
 
     def __len__(self) -> int:
         return len(self.image_files)
