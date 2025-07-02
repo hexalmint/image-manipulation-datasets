@@ -118,7 +118,7 @@ class Coverage(_BaseDataset):
         auth_split_size = len(auth_image_paths) // 10
         tamp_split_size = len(tamp_image_paths) // 10
         if split == "train":
-            self._image_files = auth_image_paths[: auth_split_size * 8]
+            self._image_files: List[str] = auth_image_paths[: auth_split_size * 8]
             self._mask_files = [None for _ in range((auth_split_size * 8))]
 
             self._image_files += tamp_image_paths[: tamp_split_size * 8]
