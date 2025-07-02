@@ -19,3 +19,6 @@ build-backend = "poetry.core.masonry.api"
 name = "image-manipulation-datasets"
 version = "0.6.5"
 packages = [{ include = "imds", from = "src" }]
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
