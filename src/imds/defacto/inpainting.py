@@ -115,7 +115,7 @@ class Inpainting(_BaseDataset):
         # Fetch the mask files.
         mask_dir = os.path.join(data_dir, "inpainting_annotations", "probe_mask")
 
-        self._mask_files = []
+        self._mask_files: List[Union[str, None]] = []
         for f in self._image_files:
             f = f.split("/")[-1]
             mask_file = os.path.abspath(os.path.join(mask_dir, f))
