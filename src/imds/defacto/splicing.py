@@ -144,7 +144,7 @@ class Splicing(_BaseDataset):
             for i in range(1, 8)
         ]
 
-        self._mask_files = []
+        self._mask_files: List[Union[str, None]] = []
         for f in self._image_files:
             shard = f.split("/")[-3].split("_")[-2]
             f = f.split("/")[-1]
