@@ -13,7 +13,7 @@ def crop_or_pad(
     are passed, they must all have the same height and width.
     Args:
         arr (list | np.ndarray): Array to crop or pad with format [B, H, W, C] or [H, W, C].
-        shape (tuple): Shape of the cropped or padded array with format [B, H, W, C] or [H, W, C].
+        shape (tuple): Shape of the cropped or padded array with format [H, W].
         pad_value (list | float): Value to use for padding.
     Returns:
         Cropped or padded array with format [B, H, W, C] or [H, W, C].
