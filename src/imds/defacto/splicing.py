@@ -97,7 +97,7 @@ class Splicing(_BaseDataset):
         self,
         data_dir: str,
         split: str = "full",
-        crop_size: Union[Tuple[int, int], None] = (256, 256),
+        crop_size: Union[Tuple[int, int], None] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
     ) -> None:
