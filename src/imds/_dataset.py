@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -22,12 +22,16 @@ class _BaseDataset(data.Dataset, ABC):
         self.pixel_range = pixel_range
         self.data_type = dtype
 
-        self.mask_files = None
-
     @property
     @abstractmethod
     def image_files(self) -> List[str]:
         """Returns the list of image files in the dataset."""
+        ...
+
+    @property
+    @abstractmethod
+    def mask_files(self) -> List[Optional[str]]:
+        """Returns the list of mask files in the dataset."""
         ...
 
     def __getitem__(self, idx) -> Tuple[torch.Tensor, torch.Tensor]:
