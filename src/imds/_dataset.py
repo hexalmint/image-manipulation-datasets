@@ -1,3 +1,4 @@
+from abc import ABC
 from typing import Tuple
 
 import numpy as np
@@ -8,7 +9,7 @@ from torch.utils import data
 from imds import utils
 
 
-class _BaseDataset(data.Dataset):
+class _BaseDataset(data.Dataset, ABC):
     def __init__(
         self,
         crop_size: Tuple[int, int],
