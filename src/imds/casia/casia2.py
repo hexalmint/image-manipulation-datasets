@@ -52,7 +52,7 @@ class CASIA2(_BaseDataset):
 
         # Fetch the image filenames.
         authentic_dir = os.path.join(data_dir, "Au")
-        auth_files = [
+        auth_files: List[str] = [
             os.path.abspath(os.path.join(authentic_dir, f))
             for f in os.listdir(authentic_dir)
             if f.endswith("tif") or f.endswith("jpg")
