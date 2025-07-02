@@ -95,19 +95,19 @@ class Inpainting(_BaseDataset):
 
         # Note that the order of the output files is aligned with the input files.
         if split == "train":
-            self.image_files = image_files[: split_size * 8]
+            self._image_files = image_files[: split_size * 8]
 
         elif split == "valid":
-            self.image_files = image_files[split_size * 8 : split_size * 9]
+            self._image_files = image_files[split_size * 8 : split_size * 9]
 
         elif split == "test":
-            self.image_files = image_files[split_size * 9 :]
+            self._image_files = image_files[split_size * 9 :]
 
         elif split == "benchmark":
-            self.image_files = image_files[:1000]
+            self._image_files = image_files[:1000]
 
         elif split == "full":
-            self.image_files = image_files
+            self._image_files = image_files
 
         else:
             raise ValueError(f"Unknown split: {split}")
@@ -116,7 +116,7 @@ class Inpainting(_BaseDataset):
         mask_dir = os.path.join(data_dir, "inpainting_annotations", "probe_mask")
 
         self.mask_files = []
-        for f in self.image_files:
+        for f in self._image_files:
             f = f.split("/")[-1]
             mask_file = os.path.abspath(os.path.join(mask_dir, f))
             if not os.path.exists(mask_file) and mask_file[-3:] == "jpg":
@@ -125,3 +125,8 @@ class Inpainting(_BaseDataset):
                 self.mask_files.append(mask_file.replace(".tif", ".jpg"))
             else:
                 self.mask_files.append(mask_file)
+
+    @property
+    def image_files(self) -> list[str]:
+        """Returns the list of image files in the dataset."""
+        return self._image_files
