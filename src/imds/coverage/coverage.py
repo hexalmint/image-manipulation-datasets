@@ -58,7 +58,7 @@ class Coverage(_BaseDataset):
         data_dir: str,
         mask_type: Literal["forged", "copy", "paste", "all"] = "all",
         split: Literal["train", "valid", "test", "benchmark", "full"] = "full",
-        crop_size: Union[Tuple[int, int], None] = None,
+        crop_size: Optional[Tuple[int, int]] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
     ) -> None:
