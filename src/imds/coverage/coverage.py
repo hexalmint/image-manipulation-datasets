@@ -55,6 +55,7 @@ class Coverage(_BaseDataset):
         self,
         data_dir: str,
         mask_type: Literal["forged", "copy", "paste", "all"] = "all",
+        split: Literal["train", "valid", "test", "benchmark", "full"] = "full",
         crop_size: Union[Tuple[int, int], None] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
@@ -111,19 +112,54 @@ class Coverage(_BaseDataset):
         for tamp_mask_path in unique_tamp_image_paths:
             tamp_image_paths.extend([tamp_mask_path] * len(_mask_types))
 
-        image_files: List[str] = auth_image_paths + tamp_image_paths
-        mask_files: List[Union[str, None]] = [None] * len(
-            auth_image_paths
-        ) + tamp_mask_paths
+        # Split the filenames into use cases.
+        auth_split_size = len(auth_image_paths) // 10
+        tamp_split_size = len(tamp_image_paths) // 10
+        if split == "train":
+            self._image_files = auth_image_paths[: auth_split_size * 8]
+            self._mask_files = [None for _ in range((auth_split_size * 8))]
+
+            self._image_files += tamp_image_paths[: tamp_split_size * 8]
+            self._mask_files += tamp_mask_paths[: tamp_split_size * 8]
+
+        elif split == "valid":
+            self._image_files = auth_image_paths[
+                auth_split_size * 8 : auth_split_size * 9
+            ]
+            self._mask_files = [None for _ in range(len(self._image_files))]
+
+            self._image_files += tamp_image_paths[
+                tamp_split_size * 8 : tamp_split_size * 9
+            ]
+            self._mask_files += tamp_mask_paths[
+                tamp_split_size * 8 : tamp_split_size * 9
+            ]
+
+        elif split == "test":
+            self._image_files = auth_image_paths[auth_split_size * 9 :]
+            self._mask_files = [None for _ in range(len(self._image_files))]
+
+            self._image_files += tamp_image_paths[tamp_split_size * 9 :]
+            self._mask_files += tamp_mask_paths[tamp_split_size * 9 :]
+
+        elif split == "benchmark":
+            self._image_files = auth_image_paths[:5]
+            self._mask_files = [None for _ in range(5)]
+
+            self._image_files += tamp_image_paths[:5]
+            self._mask_files += tamp_mask_paths[:5]
+
+        elif split == "full":
+            self._image_files = auth_image_paths + tamp_image_paths
+
+            self._mask_files = [None for _ in range(len(auth_image_paths))]
+            self._mask_files += tamp_mask_paths
 
         # Shuffle the image files for a random split.
         if shuffle:
-            p = np.random.permutation(len(image_files))
-            image_files = np.array(image_files)[p].tolist()
-            mask_files = np.array(mask_files)[p].tolist()
-
-        self._image_files = image_files
-        self._mask_files = mask_files
+            p = np.random.permutation(len(self._image_files))
+            self._image_files = np.array(self._image_files)[p].tolist()
+            self._mask_files = np.array(self._mask_files)[p].tolist()
 
     @property
     def image_files(self) -> List[str]:
