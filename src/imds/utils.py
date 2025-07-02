@@ -109,7 +109,7 @@ def _crop_or_pad(
     arr: NDArray[ArrayDTypes],
     shape: Tuple[int, int],
     crop_start: Tuple[int, int],
-    pad_value: int = 0,
+    pad_value: float = 0,
 ) -> NDArray[ArrayDTypes]:
 
     # Pad in the x-axis.
