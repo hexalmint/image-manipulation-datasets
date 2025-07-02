@@ -46,6 +46,8 @@ class Coverage(_BaseDataset):
         data_dir (str): The directory of the dataset.
         mask_type (str): The type of mask to use. Must be 'forged', 'copy', or 'paste'.
         crop_size (tuple): The size of the crop to be applied on the image and mask.
+        split (str): The split of the dataset. Must be 'train', 'valid', 'test',
+            'benchmark', or 'full'.
         pixel_range (tuple): The range of the pixel values of the input images.
             Ex. (0, 1) scales the pixels from [0, 255] to [0, 1].
         shuffle (bool): Whether to shuffle the dataset before splitting.
