@@ -29,6 +29,10 @@ def crop_or_pad(
                 arr_w,
             ), f"All arrays must have the same height and width. {arr[i].shape[:2]} != {(arr_h, arr_w)}"
 
+        assert isinstance(
+            pad_value, list
+        ), "Pad value must be a list if multiple arrays are passed."
+
         assert len(arr) == len(
             pad_value
         ), "Number of arrays and number of pad values must match."
@@ -50,12 +54,20 @@ def crop_or_pad(
     crop_start = (starting_crop_height, starting_crop_width)
 
     if isinstance(arr, list):
+        assert isinstance(
+            pad_value, list
+        ), "Pad value must be a list if multiple arrays are passed."
+
         return [
             _crop_or_pad(arr=a, shape=shape, crop_start=crop_start, pad_value=pv)
             for a, pv in zip(arr, pad_value)
         ]
 
     elif isinstance(arr, np.ndarray):
+        assert isinstance(
+            pad_value, int
+        ), "Pad value must be an integer if only one array is passed."
+
         return _crop_or_pad(
             arr=arr, shape=shape, crop_start=crop_start, pad_value=pad_value
         )
