@@ -1,5 +1,5 @@
 import os
-from typing import Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 
@@ -115,18 +115,23 @@ class Inpainting(_BaseDataset):
         # Fetch the mask files.
         mask_dir = os.path.join(data_dir, "inpainting_annotations", "probe_mask")
 
-        self.mask_files = []
+        self._mask_files = []
         for f in self._image_files:
             f = f.split("/")[-1]
             mask_file = os.path.abspath(os.path.join(mask_dir, f))
             if not os.path.exists(mask_file) and mask_file[-3:] == "jpg":
-                self.mask_files.append(mask_file.replace(".jpg", ".tif"))
+                self._mask_files.append(mask_file.replace(".jpg", ".tif"))
             elif not os.path.exists(mask_file) and mask_file[-3:] == "tif":
-                self.mask_files.append(mask_file.replace(".tif", ".jpg"))
+                self._mask_files.append(mask_file.replace(".tif", ".jpg"))
             else:
-                self.mask_files.append(mask_file)
+                self._mask_files.append(mask_file)
 
     @property
-    def image_files(self) -> list[str]:
+    def image_files(self) -> List[str]:
         """Returns the list of image files in the dataset."""
         return self._image_files
+
+    @property
+    def mask_files(self) -> List[Optional[str]]:
+        """Returns the list of mask files in the dataset."""
+        return self._mask_files
