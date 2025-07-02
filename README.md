@@ -21,7 +21,7 @@ pip install git+https://github.com/cainspencerm/image-manipulation-datasets.git@
 ## Quick Start
 
 ```python
-from imds import casia, defacto, coverage, imd
+from imds import casia
 from torch.utils.data import DataLoader
 
 # Load any dataset
