@@ -57,7 +57,9 @@ class _BaseDataset(data.Dataset[Tuple[torch.Tensor, torch.Tensor]], ABC):
             norm_image = np.array(image) * (pixel_max - pixel_min) / 255.0 + pixel_min
 
             # Crop or pad the image.
-            crop_image = utils.crop_or_pad(norm_image, crop_size, pad_value=pixel_max)
+            crop_image = utils.crop_or_pad(
+                arr=norm_image, shape=crop_size, pad_value=pixel_max
+            )
 
             # Convert the image to a tensor.
             image_tensor = (
@@ -88,7 +90,7 @@ class _BaseDataset(data.Dataset[Tuple[torch.Tensor, torch.Tensor]], ABC):
                 self.crop_size if self.crop_size is not None else norm_image.shape[:2]
             )
             crop_image, crop_mask = utils.crop_or_pad(
-                [norm_image, norm_mask], crop_size, pad_value=[pixel_max, 1.0]
+                arr=[norm_image, norm_mask], shape=crop_size, pad_value=[pixel_max, 1.0]
             )
 
             # Convert the image and mask to tensors.
