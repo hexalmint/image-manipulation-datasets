@@ -34,7 +34,7 @@ class _BaseDataset(data.Dataset[Tuple[torch.Tensor, torch.Tensor]], ABC):
         """Returns the list of mask files in the dataset."""
         ...
 
-    def __getitem__(self, idx) -> Tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         # Load the image file.
         image_file = self.image_files[idx]
         image = Image.open(image_file)
