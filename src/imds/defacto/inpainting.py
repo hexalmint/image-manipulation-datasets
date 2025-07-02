@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Tuple, Union
+from typing import List, Literal, Optional, Tuple, Union
 
 import numpy as np
 
@@ -72,7 +72,7 @@ class Inpainting(_BaseDataset):
     def __init__(
         self,
         data_dir: str,
-        split: str = "full",
+        split: Literal["train", "valid", "test", "benchmark", "full"] = "full",
         crop_size: Union[Tuple[int, int], None] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
