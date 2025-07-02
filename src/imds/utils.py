@@ -74,7 +74,7 @@ def crop_or_pad(
 
 
 def _crop_or_pad(
-    arr: np.ndarray, shape: tuple, crop_start: tuple, pad_value: int = 0
+    arr: np.ndarray, shape: Tuple[int, int], crop_start: tuple, pad_value: int = 0
 ) -> np.ndarray:
 
     # Pad in the x-axis.
