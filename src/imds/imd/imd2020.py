@@ -1,5 +1,5 @@
 import os
-from typing import Tuple
+from typing import List, Literal, Optional, Tuple, Union
 
 import numpy as np
 
@@ -45,8 +45,8 @@ class IMD2020(_BaseDataset):
     def __init__(
         self,
         data_dir: str,
-        split: str = "full",
-        crop_size: Tuple[int, int] = None,
+        split: Literal["train", "valid", "test", "benchmark", "full"] = "full",
+        crop_size: Optional[Tuple[int, int]] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
     ) -> None:
@@ -59,7 +59,8 @@ class IMD2020(_BaseDataset):
         ]
 
         # Fetch the authentic image filenames (they end in orig.jpg).
-        image_files, mask_files = [], []
+        image_files: List[str] = []
+        mask_files: List[Union[str, None]] = []
         for subdir in subdirs:
             for f in os.listdir(subdir):
                 if "orig" in f:
@@ -90,24 +91,34 @@ class IMD2020(_BaseDataset):
         # Split the filenames into use cases.
         split_size = len(image_files) // 10
         if split == "train":
-            self.image_files = image_files[: split_size * 8]
-            self.mask_files = mask_files[: split_size * 8]
+            self._image_files: List[str] = image_files[: split_size * 8]
+            self._mask_files: List[Union[str, None]] = mask_files[: split_size * 8]
 
         elif split == "valid":
-            self.image_files = image_files[split_size * 8 : split_size * 9]
-            self.mask_files = mask_files[split_size * 8 : split_size * 9]
+            self._image_files = image_files[split_size * 8 : split_size * 9]
+            self._mask_files = mask_files[split_size * 8 : split_size * 9]
 
         elif split == "test":
-            self.image_files = image_files[split_size * 9 :]
-            self.mask_files = mask_files[split_size * 9 :]
+            self._image_files = image_files[split_size * 9 :]
+            self._mask_files = mask_files[split_size * 9 :]
 
         elif split == "benchmark":
-            self.image_files = image_files[:500]
-            self.mask_files = mask_files[:500]
+            self._image_files = image_files[:500]
+            self._mask_files = mask_files[:500]
 
         elif split == "full":
-            self.image_files = image_files
-            self.mask_files = mask_files
+            self._image_files = image_files
+            self._mask_files = mask_files
 
         else:
             raise ValueError("Unknown split: " + split)
+
+    @property
+    def image_files(self) -> List[str]:
+        """Returns the list of image files in the dataset."""
+        return self._image_files
+
+    @property
+    def mask_files(self) -> List[Optional[str]]:
+        """Returns the list of mask files in the dataset."""
+        return self._mask_files

@@ -1,4 +1,5 @@
-from typing import Tuple
+from abc import ABC, abstractmethod
+from typing import List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -8,10 +9,10 @@ from torch.utils import data
 from imds import utils
 
 
-class _BaseDataset(data.Dataset):
+class _BaseDataset(data.Dataset[Tuple[torch.Tensor, torch.Tensor]], ABC):
     def __init__(
         self,
-        crop_size: Tuple[int, int],
+        crop_size: Optional[Tuple[int, int]],
         pixel_range: Tuple[float, float],
         dtype: torch.dtype = torch.float32,
     ):
@@ -21,12 +22,19 @@ class _BaseDataset(data.Dataset):
         self.pixel_range = pixel_range
         self.data_type = dtype
 
-        # Need to define these in the child class.
-        self.image_files = None
-        self.mask_files = None
+    @property
+    @abstractmethod
+    def image_files(self) -> List[str]:
+        """Returns the list of image files in the dataset."""
+        ...
 
-    def __getitem__(self, idx) -> Tuple[torch.Tensor, torch.Tensor]:
+    @property
+    @abstractmethod
+    def mask_files(self) -> List[Optional[str]]:
+        """Returns the list of mask files in the dataset."""
+        ...
 
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         # Load the image file.
         image_file = self.image_files[idx]
         image = Image.open(image_file)
@@ -43,16 +51,20 @@ class _BaseDataset(data.Dataset):
 
             # The mask doesn't exist; assume it has no manipulated pixels.
             crop_size = self.crop_size if self.crop_size is not None else image.size
-            mask = torch.zeros(crop_size, dtype=self.data_type).unsqueeze(dim=0)
+            mask_tensor = torch.zeros(crop_size, dtype=self.data_type).unsqueeze(dim=0)
 
             # Normalize the image.
-            image = np.array(image) * (pixel_max - pixel_min) / 255.0 + pixel_min
+            norm_image = np.array(image) * (pixel_max - pixel_min) / 255.0 + pixel_min
 
             # Crop or pad the image.
-            image = utils.crop_or_pad(image, crop_size, pad_value=pixel_max)
+            crop_image = utils.crop_or_pad(
+                arr=norm_image, shape=crop_size, pad_value=pixel_max
+            )
 
             # Convert the image to a tensor.
-            image = torch.from_numpy(image).to(self.data_type).permute(2, 0, 1)
+            image_tensor = (
+                torch.from_numpy(crop_image).to(self.data_type).permute(2, 0, 1)
+            )
 
         else:
 
@@ -67,25 +79,27 @@ class _BaseDataset(data.Dataset):
             mask = mask.resize(image.size[:2])
 
             # Normalize the image and mask.
-            image = np.array(image) * (pixel_max - pixel_min) / 255.0 + pixel_min
-            mask = np.array(mask) / 255.0
+            norm_image = np.array(image) * (pixel_max - pixel_min) / 255.0 + pixel_min
+            norm_mask = np.array(mask) / 255.0
 
             # Convert partially mixed pixel labels to manipulated pixel labels.
-            mask = (mask > 0.0).astype(float)
+            norm_mask = (norm_mask > 0.0).astype(norm_mask.dtype)
 
             # Crop or pad the image and mask.
-            crop_size = (
-                self.crop_size if self.crop_size is not None else image.shape[:2]
-            )
-            image, mask = utils.crop_or_pad(
-                [image, mask], crop_size, pad_value=[pixel_max, 1.0]
+            crop_size = self.crop_size if self.crop_size is not None else image.size
+            crop_image, crop_mask = utils.crop_or_pad(
+                arr=[norm_image, norm_mask], shape=crop_size, pad_value=[pixel_max, 1.0]
             )
 
             # Convert the image and mask to tensors.
-            image = torch.from_numpy(image).to(self.data_type).permute(2, 0, 1)
-            mask = torch.from_numpy(mask).to(self.data_type).permute(2, 0, 1)
+            image_tensor = (
+                torch.from_numpy(crop_image).to(self.data_type).permute(2, 0, 1)
+            )
+            mask_tensor = (
+                torch.from_numpy(crop_mask).to(self.data_type).permute(2, 0, 1)
+            )
 
-        return image, mask
+        return image_tensor, mask_tensor
 
     def __len__(self) -> int:
         return len(self.image_files)

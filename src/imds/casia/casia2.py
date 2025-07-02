@@ -1,5 +1,5 @@
 import os
-from typing import Tuple
+from typing import List, Literal, Optional, Tuple, Union
 
 import numpy as np
 
@@ -43,8 +43,8 @@ class CASIA2(_BaseDataset):
     def __init__(
         self,
         data_dir: str,
-        split: str = "full",
-        crop_size: Tuple[int, int] = None,
+        split: Literal["train", "valid", "test", "benchmark", "full"] = "full",
+        crop_size: Optional[Tuple[int, int]] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
     ) -> None:
@@ -52,37 +52,25 @@ class CASIA2(_BaseDataset):
 
         # Fetch the image filenames.
         authentic_dir = os.path.join(data_dir, "Au")
-        auth_files = [
+        auth_files: List[str] = [
             os.path.abspath(os.path.join(authentic_dir, f))
             for f in os.listdir(authentic_dir)
             if f.endswith("tif") or f.endswith("jpg")
         ]
 
         tampered_dir = os.path.join(data_dir, "Tp")
-        tamp_files = [
+        tamp_files: List[str] = [
             os.path.abspath(os.path.join(tampered_dir, f))
             for f in os.listdir(tampered_dir)
             if f.endswith("tif") or f.endswith("jpg")
         ]
 
         # Ignore these files that have no ground truth masks.
-        corrupted_files = [
-            "Tp/Tp_D_NRD_S_N_cha10002_cha10001_20094.jpg",
-            "Tp/Tp_S_NRD_S_N_arc20079_arc20079_01719.tif",
-        ]
-
-        remove_files = []
-        for file in tamp_files:
-            for f in corrupted_files:
-                if f in file:
-                    remove_files.append(file)
-
-        for file in remove_files:
-            tamp_files.remove(file)
+        remove_files: List[str] = []
 
         # Fetch the mask filenames.
         mask_dir = os.path.join(data_dir, "CASIA 2 Groundtruth")
-        mask_files = [
+        mask_files: List[str] = [
             os.path.abspath(os.path.join(mask_dir, f))
             for f in os.listdir(mask_dir)
             if f.endswith(".tif") or f.endswith(".jpg") or f.endswith(".png")
@@ -98,13 +86,17 @@ class CASIA2(_BaseDataset):
                     mask = f
                     break
 
-            if mask is None and file.split("/")[-2] == "Tp":
-                raise ValueError("No ground truth file found for image: " + file)
+            if mask is None:
+                remove_files.append(file)
+                continue
 
             mask_file = os.path.abspath(os.path.join(mask_dir, mask))
             sorted_mask_files.append(mask_file)
 
         mask_files = sorted_mask_files
+
+        # Remove tampered files that have no ground truth masks.
+        tamp_files = [f for f in tamp_files if f not in remove_files]
 
         # Shuffle the image files for a random split.
         auth_files = np.random.permutation(auth_files).tolist()
@@ -118,44 +110,56 @@ class CASIA2(_BaseDataset):
         auth_split_size = len(auth_files) // 10
         tamp_split_size = len(tamp_files) // 10
         if split == "train":
-            self.image_files = auth_files[: auth_split_size * 8]
-            self.mask_files = [None for _ in range((auth_split_size * 8))]
+            self._image_files: List[str] = auth_files[: auth_split_size * 8]
+            self._mask_files: List[Union[str, None]] = [
+                None for _ in range((auth_split_size * 8))
+            ]
 
-            self.image_files += tamp_files[: tamp_split_size * 8]
-            self.mask_files += mask_files[: tamp_split_size * 8]
+            self._image_files += tamp_files[: tamp_split_size * 8]
+            self._mask_files += mask_files[: tamp_split_size * 8]
 
         elif split == "valid":
-            self.image_files = auth_files[auth_split_size * 8 : auth_split_size * 9]
-            self.mask_files = [None for _ in range(len(self.image_files))]
+            self._image_files = auth_files[auth_split_size * 8 : auth_split_size * 9]
+            self._mask_files = [None for _ in range(len(self._image_files))]
 
-            self.image_files += tamp_files[tamp_split_size * 8 : tamp_split_size * 9]
-            self.mask_files += mask_files[tamp_split_size * 8 : tamp_split_size * 9]
+            self._image_files += tamp_files[tamp_split_size * 8 : tamp_split_size * 9]
+            self._mask_files += mask_files[tamp_split_size * 8 : tamp_split_size * 9]
 
         elif split == "test":
-            self.image_files = auth_files[auth_split_size * 9 :]
-            self.mask_files = [None for _ in range(len(self.image_files))]
+            self._image_files = auth_files[auth_split_size * 9 :]
+            self._mask_files = [None for _ in range(len(self._image_files))]
 
-            self.image_files += tamp_files[tamp_split_size * 9 :]
-            self.mask_files += mask_files[tamp_split_size * 9 :]
+            self._image_files += tamp_files[tamp_split_size * 9 :]
+            self._mask_files += mask_files[tamp_split_size * 9 :]
 
         elif split == "benchmark":
-            self.image_files = auth_files[:500]
-            self.mask_files = [None for _ in range(500)]
+            self._image_files = auth_files[:500]
+            self._mask_files = [None for _ in range(500)]
 
-            self.image_files += tamp_files[:500]
-            self.mask_files += mask_files[:500]
+            self._image_files += tamp_files[:500]
+            self._mask_files += mask_files[:500]
 
         elif split == "full":
-            self.image_files = auth_files + tamp_files
+            self._image_files = auth_files + tamp_files
 
-            self.mask_files = [None for _ in range(len(auth_files))]
-            self.mask_files += mask_files
+            self._mask_files = [None for _ in range(len(auth_files))]
+            self._mask_files += mask_files
 
         else:
             raise ValueError("Unknown split: " + split)
 
         # Shuffle the image files to mix authentic and tampered images.
         if shuffle:
-            p = np.random.permutation(len(self.image_files))
-            self.image_files = [self.image_files[i] for i in p]
-            self.mask_files = [self.mask_files[i] for i in p]
+            p = np.random.permutation(len(self._image_files))
+            self._image_files = [self._image_files[i] for i in p]
+            self._mask_files = [self._mask_files[i] for i in p]
+
+    @property
+    def image_files(self) -> List[str]:
+        """Returns the list of image files in the dataset."""
+        return self._image_files
+
+    @property
+    def mask_files(self) -> List[Optional[str]]:
+        """Returns the list of mask files in the dataset."""
+        return self._mask_files

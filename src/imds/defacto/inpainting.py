@@ -1,5 +1,5 @@
 import os
-from typing import Tuple
+from typing import List, Literal, Optional, Tuple, Union
 
 import numpy as np
 
@@ -72,8 +72,8 @@ class Inpainting(_BaseDataset):
     def __init__(
         self,
         data_dir: str,
-        split: str = "full",
-        crop_size: Tuple[int, int] = None,
+        split: Literal["train", "valid", "test", "benchmark", "full"] = "full",
+        crop_size: Optional[Tuple[int, int]] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
     ) -> None:
@@ -95,19 +95,19 @@ class Inpainting(_BaseDataset):
 
         # Note that the order of the output files is aligned with the input files.
         if split == "train":
-            self.image_files = image_files[: split_size * 8]
+            self._image_files: List[str] = image_files[: split_size * 8]
 
         elif split == "valid":
-            self.image_files = image_files[split_size * 8 : split_size * 9]
+            self._image_files = image_files[split_size * 8 : split_size * 9]
 
         elif split == "test":
-            self.image_files = image_files[split_size * 9 :]
+            self._image_files = image_files[split_size * 9 :]
 
         elif split == "benchmark":
-            self.image_files = image_files[:1000]
+            self._image_files = image_files[:1000]
 
         elif split == "full":
-            self.image_files = image_files
+            self._image_files = image_files
 
         else:
             raise ValueError(f"Unknown split: {split}")
@@ -115,13 +115,23 @@ class Inpainting(_BaseDataset):
         # Fetch the mask files.
         mask_dir = os.path.join(data_dir, "inpainting_annotations", "probe_mask")
 
-        self.mask_files = []
-        for f in self.image_files:
+        self._mask_files: List[Union[str, None]] = []
+        for f in self._image_files:
             f = f.split("/")[-1]
             mask_file = os.path.abspath(os.path.join(mask_dir, f))
             if not os.path.exists(mask_file) and mask_file[-3:] == "jpg":
-                self.mask_files.append(mask_file.replace(".jpg", ".tif"))
+                self._mask_files.append(mask_file.replace(".jpg", ".tif"))
             elif not os.path.exists(mask_file) and mask_file[-3:] == "tif":
-                self.mask_files.append(mask_file.replace(".tif", ".jpg"))
+                self._mask_files.append(mask_file.replace(".tif", ".jpg"))
             else:
-                self.mask_files.append(mask_file)
+                self._mask_files.append(mask_file)
+
+    @property
+    def image_files(self) -> List[str]:
+        """Returns the list of image files in the dataset."""
+        return self._image_files
+
+    @property
+    def mask_files(self) -> List[Optional[str]]:
+        """Returns the list of mask files in the dataset."""
+        return self._mask_files
