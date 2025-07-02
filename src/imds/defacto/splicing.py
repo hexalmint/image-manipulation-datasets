@@ -91,7 +91,6 @@ class Splicing(_BaseDataset):
         pixel_range (tuple): The range of the pixel values of the input images.
             Ex. (0, 1) scales the pixels from [0, 255] to [0, 1].
         shuffle (bool): Whether to shuffle the dataset before splitting.
-        download (bool): Whether to download the dataset.
     """
 
     def __init__(
@@ -101,16 +100,8 @@ class Splicing(_BaseDataset):
         crop_size: Tuple[int, int] = (256, 256),
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
-        download: bool = False,
     ) -> None:
         super().__init__(crop_size, pixel_range)
-
-        if download:
-            raise NotImplementedError(
-                "Downloading is not implemented yet due to the requirement of a "
-                "browser to obtain the dataset. Please refer to the following link "
-                "for more information: https://defactodataset.github.io."
-            )
 
         # Fetch the image filenames.
         image_dirs = [
