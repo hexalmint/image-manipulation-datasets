@@ -46,7 +46,7 @@ class IMD2020(_BaseDataset):
         self,
         data_dir: str,
         split: Literal["train", "valid", "test", "benchmark", "full"] = "full",
-        crop_size: Union[Tuple[int, int], None] = None,
+        crop_size: Optional[Tuple[int, int]] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
     ) -> None:
