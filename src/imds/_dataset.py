@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -12,7 +12,7 @@ from imds import utils
 class _BaseDataset(data.Dataset[Tuple[torch.Tensor, torch.Tensor]], ABC):
     def __init__(
         self,
-        crop_size: Union[Tuple[int, int], None],
+        crop_size: Optional[Tuple[int, int]],
         pixel_range: Tuple[float, float],
         dtype: torch.dtype = torch.float32,
     ):
