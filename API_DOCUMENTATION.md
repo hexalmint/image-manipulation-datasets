@@ -7,7 +7,7 @@ The `imds` package provides PyTorch-compatible dataset classes for common image 
 ## Installation
 
 ```bash
-pip install git+https://github.com/cainspencerm/image-manipulation-datasets.git@0.6
+pip install image-manipulation-datasets
 ```
 
 ## Core Components
@@ -21,7 +21,6 @@ All dataset classes share these common initialization parameters:
 - **`crop_size`** (Tuple[int, int], optional): Size of crops to apply to images and masks. If `None`, uses original image size. Default: `None`
 - **`pixel_range`** (Tuple[float, float], optional): Target pixel value range for normalization. Default: `(0.0, 1.0)`
 - **`shuffle`** (bool, optional): Whether to shuffle the dataset before splitting into train/valid/test. This is different from DataLoader shuffling - this parameter controls the initial randomization of the entire dataset before creating splits, while DataLoader shuffling randomizes batch order during training. Default: `True`
-- **`download`** (bool, optional): Whether to download the dataset (not implemented). Default: `False`
 
 #### Common Methods
 
