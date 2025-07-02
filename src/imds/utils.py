@@ -50,10 +50,15 @@ def crop_or_pad(
     crop_start = (starting_crop_height, starting_crop_width)
 
     if isinstance(arr, list):
-        return [_crop_or_pad(a, shape, crop_start, pv) for a, pv in zip(arr, pad_value)]
+        return [
+            _crop_or_pad(arr=a, shape=shape, crop_start=crop_start, pad_value=pv)
+            for a, pv in zip(arr, pad_value)
+        ]
 
     elif isinstance(arr, np.ndarray):
-        return _crop_or_pad(arr, shape, crop_start, pad_value)
+        return _crop_or_pad(
+            arr=arr, shape=shape, crop_start=crop_start, pad_value=pad_value
+        )
 
 
 def _crop_or_pad(
