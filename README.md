@@ -15,7 +15,7 @@ This Python package provides PyTorch-compatible dataset classes for common image
 ## Installation
 
 ```bash
-pip install git+https://github.com/cainspencerm/image-manipulation-datasets.git@0.6
+pip install image-manipulation-datasets
 ```
 
 ## Quick Start
