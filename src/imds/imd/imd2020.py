@@ -91,7 +91,7 @@ class IMD2020(_BaseDataset):
         split_size = len(image_files) // 10
         if split == "train":
             self._image_files: List[str] = image_files[: split_size * 8]
-            self._mask_files = mask_files[: split_size * 8]
+            self._mask_files: List[Union[str, None]] = mask_files[: split_size * 8]
 
         elif split == "valid":
             self._image_files = image_files[split_size * 8 : split_size * 9]
