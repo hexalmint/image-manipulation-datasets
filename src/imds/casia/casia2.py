@@ -118,35 +118,35 @@ class CASIA2(_BaseDataset):
         auth_split_size = len(auth_files) // 10
         tamp_split_size = len(tamp_files) // 10
         if split == "train":
-            self.image_files = auth_files[: auth_split_size * 8]
+            self._image_files = auth_files[: auth_split_size * 8]
             self.mask_files = [None for _ in range((auth_split_size * 8))]
 
-            self.image_files += tamp_files[: tamp_split_size * 8]
+            self._image_files += tamp_files[: tamp_split_size * 8]
             self.mask_files += mask_files[: tamp_split_size * 8]
 
         elif split == "valid":
-            self.image_files = auth_files[auth_split_size * 8 : auth_split_size * 9]
-            self.mask_files = [None for _ in range(len(self.image_files))]
+            self._image_files = auth_files[auth_split_size * 8 : auth_split_size * 9]
+            self.mask_files = [None for _ in range(len(self._image_files))]
 
-            self.image_files += tamp_files[tamp_split_size * 8 : tamp_split_size * 9]
+            self._image_files += tamp_files[tamp_split_size * 8 : tamp_split_size * 9]
             self.mask_files += mask_files[tamp_split_size * 8 : tamp_split_size * 9]
 
         elif split == "test":
-            self.image_files = auth_files[auth_split_size * 9 :]
-            self.mask_files = [None for _ in range(len(self.image_files))]
+            self._image_files = auth_files[auth_split_size * 9 :]
+            self.mask_files = [None for _ in range(len(self._image_files))]
 
-            self.image_files += tamp_files[tamp_split_size * 9 :]
+            self._image_files += tamp_files[tamp_split_size * 9 :]
             self.mask_files += mask_files[tamp_split_size * 9 :]
 
         elif split == "benchmark":
-            self.image_files = auth_files[:500]
+            self._image_files = auth_files[:500]
             self.mask_files = [None for _ in range(500)]
 
-            self.image_files += tamp_files[:500]
+            self._image_files += tamp_files[:500]
             self.mask_files += mask_files[:500]
 
         elif split == "full":
-            self.image_files = auth_files + tamp_files
+            self._image_files = auth_files + tamp_files
 
             self.mask_files = [None for _ in range(len(auth_files))]
             self.mask_files += mask_files
@@ -156,6 +156,11 @@ class CASIA2(_BaseDataset):
 
         # Shuffle the image files to mix authentic and tampered images.
         if shuffle:
-            p = np.random.permutation(len(self.image_files))
-            self.image_files = [self.image_files[i] for i in p]
+            p = np.random.permutation(len(self._image_files))
+            self._image_files = [self._image_files[i] for i in p]
             self.mask_files = [self.mask_files[i] for i in p]
+
+    @property
+    def image_files(self) -> List[str]:
+        """Returns the list of image files in the dataset."""
+        return self._image_files
