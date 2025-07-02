@@ -1,5 +1,5 @@
 import os
-from typing import Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 
@@ -82,7 +82,7 @@ class Coverage(_BaseDataset):
             for f in os.listdir(mask_dir)
             if ".tif" in f
         ]
-        self.mask_files = []
+        self._mask_files = []
         for f in self.image_files:
             f_name = f.split(".")[0]
             if f_name[-1] == "t":
@@ -92,9 +92,14 @@ class Coverage(_BaseDataset):
             else:
                 mask_file = None
 
-            self.mask_files.append(mask_file)
+            self._mask_files.append(mask_file)
 
     @property
     def image_files(self) -> List[str]:
         """Returns the list of image files in the dataset."""
         return self._image_files
+
+    @property
+    def mask_files(self) -> List[Optional[str]]:
+        """Returns the list of mask files in the dataset."""
+        return self._mask_files
