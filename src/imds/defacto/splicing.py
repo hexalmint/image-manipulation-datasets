@@ -1,5 +1,5 @@
 import os
-from typing import Tuple
+from typing import List, Tuple
 
 import numpy as np
 
@@ -121,19 +121,19 @@ class Splicing(_BaseDataset):
         split_size = len(image_files) // 10
 
         if split == "train":
-            self.image_files = image_files[: split_size * 8]
+            self._image_files = image_files[: split_size * 8]
 
         elif split == "valid":
-            self.image_files = image_files[split_size * 8 : split_size * 9]
+            self._image_files = image_files[split_size * 8 : split_size * 9]
 
         elif split == "test":
-            self.image_files = image_files[split_size * 9 :]
+            self._image_files = image_files[split_size * 9 :]
 
         elif split == "benchmark":
-            self.image_files = image_files[:1000]
+            self._image_files = image_files[:1000]
 
         elif split == "full":
-            self.image_files = image_files
+            self._image_files = image_files
 
         else:
             raise ValueError(f"Unknown split: {split}")
@@ -145,7 +145,7 @@ class Splicing(_BaseDataset):
         ]
 
         self.mask_files = []
-        for f in self.image_files:
+        for f in self._image_files:
             shard = f.split("/")[-3].split("_")[-2]
             f = f.split("/")[-1]
             mask_file = os.path.abspath(os.path.join(mask_dirs[int(shard) - 1], f))
@@ -155,3 +155,8 @@ class Splicing(_BaseDataset):
                 self.mask_files.append(mask_file.replace(".tif", ".jpg"))
             else:
                 self.mask_files.append(mask_file)
+
+    @property
+    def image_files(self) -> List[str]:
+        """Returns the list of image files in the dataset."""
+        return self._image_files
