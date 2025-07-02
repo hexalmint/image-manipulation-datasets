@@ -60,7 +60,7 @@ class IMD2020(_BaseDataset):
 
         # Fetch the authentic image filenames (they end in orig.jpg).
         image_files: List[str] = []
-        mask_files = []
+        mask_files: List[Union[str, None]] = []
         for subdir in subdirs:
             for f in os.listdir(subdir):
                 if "orig" in f:
