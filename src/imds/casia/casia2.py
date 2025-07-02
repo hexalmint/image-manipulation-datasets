@@ -59,7 +59,7 @@ class CASIA2(_BaseDataset):
         ]
 
         tampered_dir = os.path.join(data_dir, "Tp")
-        tamp_files = [
+        tamp_files: List[str] = [
             os.path.abspath(os.path.join(tampered_dir, f))
             for f in os.listdir(tampered_dir)
             if f.endswith("tif") or f.endswith("jpg")
