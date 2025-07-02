@@ -1,12 +1,12 @@
 import random
-from typing import List, Union
+from typing import List, Tuple, Union
 
 import numpy as np
 
 
 def crop_or_pad(
     arr: Union[List[np.ndarray], np.ndarray],
-    shape: tuple,
+    shape: Tuple[int, int],
     pad_value: Union[List[int], int] = 0,
 ) -> Union[List[np.ndarray], np.ndarray]:
     """Crop or pad an array (or arrays) to a given shape. Note that if multiple arrays
