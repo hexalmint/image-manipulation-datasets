@@ -2,13 +2,45 @@ import random
 from typing import List, Tuple, Union
 
 import numpy as np
+from numpy.typing import NDArray
+
+
+ArrayDTypes = Union[
+    np.float16,
+    np.float32,
+    np.float64,
+    np.float80,
+    np.float96,
+    np.float128,
+    np.float_,
+    np.int8,
+    np.int16,
+    np.int32,
+    np.int64,
+    np.int128,
+    np.int256,
+    np.int_,
+    np.uint8,
+    np.uint16,
+    np.uint32,
+    np.uint64,
+    np.uint128,
+    np.uint256,
+    np.uint,
+]
 
 
 def crop_or_pad(
-    arr: Union[List[np.ndarray], np.ndarray],
+    arr: Union[
+        List[NDArray[ArrayDTypes]],
+        NDArray[ArrayDTypes],
+    ],
     shape: Tuple[int, int],
     pad_value: Union[List[int], int] = 0,
-) -> Union[List[np.ndarray], np.ndarray]:
+) -> Union[
+    List[NDArray[ArrayDTypes]],
+    NDArray[ArrayDTypes],
+]:
     """Crop or pad an array (or arrays) to a given shape. Note that if multiple arrays
     are passed, they must all have the same height and width.
     Args:
@@ -74,8 +106,11 @@ def crop_or_pad(
 
 
 def _crop_or_pad(
-    arr: np.ndarray, shape: Tuple[int, int], crop_start: tuple, pad_value: int = 0
-) -> np.ndarray:
+    arr: NDArray[ArrayDTypes],
+    shape: Tuple[int, int],
+    crop_start: tuple,
+    pad_value: int = 0,
+) -> NDArray[ArrayDTypes]:
 
     # Pad in the x-axis.
     if arr.shape[0] < shape[0]:
