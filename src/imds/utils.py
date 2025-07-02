@@ -36,7 +36,7 @@ def crop_or_pad(
         NDArray[ArrayDTypes],
     ],
     shape: Tuple[int, int],
-    pad_value: Union[List[int], int] = 0,
+    pad_value: Union[List[float], float] = 0,
 ) -> Union[
     List[NDArray[ArrayDTypes]],
     NDArray[ArrayDTypes],
