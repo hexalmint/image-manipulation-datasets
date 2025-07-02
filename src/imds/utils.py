@@ -45,17 +45,15 @@ def crop_or_pad(
         raise ValueError("Invalid array type: {}".format(type(arr)))
 
     # This is used to determine the starting point of the crop.
-    crop_height = (random.randint(0, max(arr_h - shape[0], 0)) // 8) * 8
-    crop_width = (random.randint(0, max(arr_w - shape[1], 0)) // 8) * 8
+    starting_crop_height = (random.randint(0, max(arr_h - shape[0], 0)) // 8) * 8
+    starting_crop_width = (random.randint(0, max(arr_w - shape[1], 0)) // 8) * 8
+    crop_start = (starting_crop_height, starting_crop_width)
 
     if isinstance(arr, list):
-        return [
-            _crop_or_pad(a, shape, (crop_height, crop_width), pv)
-            for a, pv in zip(arr, pad_value)
-        ]
+        return [_crop_or_pad(a, shape, crop_start, pv) for a, pv in zip(arr, pad_value)]
 
     elif isinstance(arr, np.ndarray):
-        return _crop_or_pad(arr, shape, (crop_height, crop_width), pad_value)
+        return _crop_or_pad(arr, shape, crop_start, pad_value)
 
 
 def _crop_or_pad(
