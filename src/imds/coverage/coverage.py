@@ -54,14 +54,19 @@ class Coverage(_BaseDataset):
     def __init__(
         self,
         data_dir: str,
-        mask_type: Literal["forged", "copy", "paste"] = "forged",
+        mask_type: Literal["forged", "copy", "paste", "all"] = "all",
         crop_size: Union[Tuple[int, int], None] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
     ) -> None:
         super().__init__(crop_size, pixel_range)
 
-        assert mask_type in ["forged", "copy", "paste"]
+        assert mask_type in [
+            "forged",
+            "copy",
+            "paste",
+            "all",
+        ], f"Invalid mask type: {mask_type}. Must be one of 'forged', 'copy', 'paste', or 'all'."
 
         # Fetch the image filenames.
         image_dir = os.path.join(data_dir, "image")
@@ -75,24 +80,37 @@ class Coverage(_BaseDataset):
         if shuffle:
             self._image_files = np.random.permutation(self.image_files).tolist()
 
-        # Fetch the mask filenames in the correct order.
+        # Fetch the mask filenames.
         mask_dir = os.path.abspath(os.path.join(data_dir, "mask"))
         mask_files = [
             os.path.abspath(os.path.join(mask_dir, f))
             for f in os.listdir(mask_dir)
             if ".tif" in f
         ]
+
+        # Create a mask type filter.
+        if mask_type == "forged":
+            _mask_types = ["forged"]
+        elif mask_type == "copy":
+            _mask_types = ["copy"]
+        elif mask_type == "paste":
+            _mask_types = ["paste"]
+        elif mask_type == "all":
+            _mask_types = ["forged", "copy", "paste"]
+
+        # Organize the mask files based on the ordering of the image files.
         self._mask_files = []
         for f in self.image_files:
             f_name = f.split(".")[0]
             if f_name[-1] == "t":
-                mask_file = f_name.split("/")[-1][:-1] + mask_type + ".tif"
-                mask_file = os.path.abspath(os.path.join(mask_dir, mask_file))
-                assert mask_file in mask_files
-            else:
-                mask_file = None
+                for mt in _mask_types:
+                    mask_file = f_name[:-1] + mt + ".tif"
+                    mask_file = os.path.abspath(os.path.join(mask_dir, mask_file))
+                    assert mask_file in mask_files
 
-            self._mask_files.append(mask_file)
+                    self._mask_files.append(mask_file)
+            else:
+                self._mask_files.append(None)
 
     @property
     def image_files(self) -> List[str]:
