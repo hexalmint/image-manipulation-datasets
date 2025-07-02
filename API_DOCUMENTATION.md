@@ -12,10 +12,6 @@ pip install git+https://github.com/cainspencerm/image-manipulation-datasets.git@
 
 ## Core Components
 
-### Base Dataset Class
-
-All dataset classes inherit from the private `_BaseDataset` class, which provides common functionality for image and mask loading, preprocessing, and tensor conversion.
-
 #### Common Parameters
 
 All dataset classes share these common initialization parameters:
@@ -48,7 +44,7 @@ Returns the total number of samples in the dataset.
 ```python
 from imds import casia
 
-class CASIA2(_BaseDataset):
+class CASIA2:
 ```
 
 CASIA V2 dataset for forgery classification containing 4,795 images (1,701 authentic and 3,274 forged).
@@ -99,7 +95,7 @@ Visit: https://github.com/namtpham/casia2groundtruth
 ```python
 from imds import coverage
 
-class Coverage(_BaseDataset):
+class Coverage:
 ```
 
 The Copy-Move Forgery Database with Similar but Genuine Objects (COVERAGE) dataset containing copy-move forged images with corresponding originals.
@@ -154,7 +150,7 @@ The Defacto dataset collection includes three types of image manipulation datase
 ```python
 from imds import defacto
 
-class CopyMove(_BaseDataset):
+class CopyMove:
 ```
 
 Contains approximately 19,000 copy-move forgeries with binary masks indicating forgery locations and source regions.
@@ -183,7 +179,7 @@ Defacto CopyMove/
 ```python
 from imds import defacto
 
-class Inpainting(_BaseDataset):
+class Inpainting:
 ```
 
 Contains approximately 25,000 object-removal forgeries with corresponding masks.
@@ -205,7 +201,7 @@ Defacto Inpainting/
 ```python
 from imds import defacto
 
-class Splicing(_BaseDataset):
+class Splicing:
 ```
 
 Contains approximately 105,000 splicing forgeries with binary masks and metadata about source images.
@@ -259,7 +255,7 @@ Visit: https://defactodataset.github.io
 ```python
 from imds import imd
 
-class IMD2020(_BaseDataset):
+class IMD2020:
 ```
 
 Contains 2,010 real-life manipulated images downloaded from the Internet with corresponding authentic versions and manually created binary masks.
@@ -315,7 +311,7 @@ def crop_or_pad(
 ) -> Union[List[np.ndarray], np.ndarray]:
 ```
 
-Crop or pad an array (or list of arrays) to a target shape. Used internally for image preprocessing.
+Crop or pad an array (or list of arrays) to a target shape.
 
 #### Parameters
 - **`arr`**: Input array(s) with format `[H, W, C]` or `[H, W]`
