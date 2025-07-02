@@ -65,7 +65,7 @@ class Coverage(_BaseDataset):
 
         # Fetch the image filenames.
         image_dir = os.path.join(data_dir, "image")
-        self.image_files = [
+        self._image_files = [
             os.path.abspath(os.path.join(image_dir, f))
             for f in os.listdir(image_dir)
             if f.endswith("tif") or f.endswith("jpg")
@@ -73,7 +73,7 @@ class Coverage(_BaseDataset):
 
         # Shuffle the image files for a random split.
         if shuffle:
-            self.image_files = np.random.permutation(self.image_files).tolist()
+            self._image_files = np.random.permutation(self.image_files).tolist()
 
         # Fetch the mask filenames in the correct order.
         mask_dir = os.path.abspath(os.path.join(data_dir, "mask"))
@@ -93,3 +93,8 @@ class Coverage(_BaseDataset):
                 mask_file = None
 
             self.mask_files.append(mask_file)
+
+    @property
+    def image_files(self) -> List[str]:
+        """Returns the list of image files in the dataset."""
+        return self._image_files
