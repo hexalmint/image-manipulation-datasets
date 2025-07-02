@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Literal, Tuple, Union
 
 import numpy as np
 
@@ -54,7 +54,7 @@ class Coverage(_BaseDataset):
     def __init__(
         self,
         data_dir: str,
-        mask_type: str = "forged",
+        mask_type: Literal["forged", "copy", "paste"] = "forged",
         crop_size: Union[Tuple[int, int], None] = None,
         pixel_range: Tuple[float, float] = (0.0, 1.0),
         shuffle: bool = True,
