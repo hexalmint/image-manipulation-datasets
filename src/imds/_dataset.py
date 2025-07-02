@@ -9,7 +9,7 @@ from torch.utils import data
 from imds import utils
 
 
-class _BaseDataset(data.Dataset, ABC):
+class _BaseDataset(data.Dataset[Tuple[torch.Tensor, torch.Tensor]], ABC):
     def __init__(
         self,
         crop_size: Union[Tuple[int, int], None],
@@ -35,7 +35,6 @@ class _BaseDataset(data.Dataset, ABC):
         ...
 
     def __getitem__(self, idx) -> Tuple[torch.Tensor, torch.Tensor]:
-
         # Load the image file.
         image_file = self.image_files[idx]
         image = Image.open(image_file)
