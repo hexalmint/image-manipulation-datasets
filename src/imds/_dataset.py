@@ -86,9 +86,7 @@ class _BaseDataset(data.Dataset[Tuple[torch.Tensor, torch.Tensor]], ABC):
             norm_mask = (norm_mask > 0.0).astype(norm_mask.dtype)
 
             # Crop or pad the image and mask.
-            crop_size = (
-                self.crop_size if self.crop_size is not None else norm_image.shape[:2]
-            )
+            crop_size = self.crop_size if self.crop_size is not None else image.size
             crop_image, crop_mask = utils.crop_or_pad(
                 arr=[norm_image, norm_mask], shape=crop_size, pad_value=[pixel_max, 1.0]
             )
