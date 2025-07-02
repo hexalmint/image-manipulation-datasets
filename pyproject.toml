@@ -1,6 +1,6 @@
 [project]
 name = "image-manipulation-datasets"
-version = "1.0.0"
+version = "1.0.1"
 description = "A collection of image manipulation dataset classes implemented in PyTorch"
 authors = [{ name = "Spencer Cain", email = "cainspencerm@protonmail.com" }]
 readme = "README.md"
@@ -17,7 +17,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "image-manipulation-datasets"
-version = "1.0.0"
+version = "1.0.1"
 packages = [{ include = "imds", from = "src" }]
 
 [tool.semantic_release]
