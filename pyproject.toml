@@ -20,6 +20,9 @@ name = "image-manipulation-datasets"
 version = "1.0.1"
 packages = [{ include = "imds", from = "src" }]
 
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.16.1"
+
 [tool.semantic_release]
 version_toml = [
     "pyproject.toml:project.version",
