@@ -21,4 +21,7 @@ version = "0.6.5"
 packages = [{ include = "imds", from = "src" }]
 
 [tool.semantic_release]
-version_toml = ["pyproject.toml:project.version"]
+version_toml = [
+    "pyproject.toml:project.version",
+    "pyproject.toml:tool.poetry.version",
+]
