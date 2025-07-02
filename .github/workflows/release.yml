@@ -63,6 +63,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Pull latest changes
+        run: |
+          git fetch --all
+          git reset --hard origin/master
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
