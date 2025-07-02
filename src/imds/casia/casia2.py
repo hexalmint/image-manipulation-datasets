@@ -70,7 +70,7 @@ class CASIA2(_BaseDataset):
 
         # Fetch the mask filenames.
         mask_dir = os.path.join(data_dir, "CASIA 2 Groundtruth")
-        mask_files = [
+        mask_files: List[str] = [
             os.path.abspath(os.path.join(mask_dir, f))
             for f in os.listdir(mask_dir)
             if f.endswith(".tif") or f.endswith(".jpg") or f.endswith(".png")
