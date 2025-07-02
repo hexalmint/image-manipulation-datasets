@@ -66,19 +66,7 @@ class CASIA2(_BaseDataset):
         ]
 
         # Ignore these files that have no ground truth masks.
-        corrupted_files = [
-            "Tp/Tp_D_NRD_S_N_cha10002_cha10001_20094.jpg",
-            "Tp/Tp_S_NRD_S_N_arc20079_arc20079_01719.tif",
-        ]
-
-        remove_files = []
-        for file in tamp_files:
-            for f in corrupted_files:
-                if f in file:
-                    remove_files.append(file)
-
-        for file in remove_files:
-            tamp_files.remove(file)
+        remove_files: list[str] = []
 
         # Fetch the mask filenames.
         mask_dir = os.path.join(data_dir, "CASIA 2 Groundtruth")
@@ -98,13 +86,17 @@ class CASIA2(_BaseDataset):
                     mask = f
                     break
 
-            if mask is None and file.split("/")[-2] == "Tp":
-                raise ValueError("No ground truth file found for image: " + file)
+            if mask is None:
+                remove_files.append(file)
+                continue
 
             mask_file = os.path.abspath(os.path.join(mask_dir, mask))
             sorted_mask_files.append(mask_file)
 
         mask_files = sorted_mask_files
+
+        # Remove tampered files that have no ground truth masks.
+        tamp_files = [f for f in tamp_files if f not in remove_files]
 
         # Shuffle the image files for a random split.
         auth_files = np.random.permutation(auth_files).tolist()
